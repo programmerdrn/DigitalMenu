@@ -1,0 +1,58 @@
+﻿@model List<DigitalMenu.Application.DTOs.OrderDTOs.OrderDto>
+@using DigitalMenu.Core.Enums
+
+@{
+    ViewData["Title"] = "سفارشات";
+}
+
+<div class="container mt-4">
+    <h1>مدیریت سفارشات</h1>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var order in Model)
+            {
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <h5 class="mb-0">سفارش #@order.Id.ToString().Substring(0, 8)</h5>
+                            <span class="badge
+                                        @(order.Status == OrderStatus.Pending ? "bg-warning" :
+                                                                    order.Status == OrderStatus.Preparing ? "bg-info" :
+                                                                    order.Status == OrderStatus.Ready ? "bg-success" : "bg-secondary")">
+                                @(order.Status == OrderStatus.Pending ? "در انتظار" :
+                                                        order.Status == OrderStatus.Preparing ? "در حال آماده‌سازی" :
+                                                        order.Status == OrderStatus.Ready ? "آماده" :
+                                                        order.Status == OrderStatus.Served ? "سرو شده" : "لغو شده")
+                    </span>
+                </div>
+                <div class="card-body">
+                    <p><strong>میز: </strong>@order.TableNumber</p>
+                    <p><strong>مبلغ کل: </strong>@order.TotalAmount.ToString("C")</p>
+                    <p><strong>تاریخ: </strong>@order.CreatedAt.ToString("yyyy/MM/dd HH:mm")</p>
+
+                            <h6>محصولات:</h6>
+                            <ul>
+                        @foreach (var item in order.OrderItems)
+                                {
+                                    <li>@item.ProductName - @item.Quantity عدد</li>
+                                }
+                            </ul>
+
+                            <a href="@Url.Action("Details", new { id = order.Id })" class="btn btn-primary">
+                                مشاهده جزئیات
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">هیچ سفارش در انتظاری وجود ندارد</div>
+            </div>
+        }
+    </div>
+</div>

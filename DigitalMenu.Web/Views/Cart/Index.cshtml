@@ -1,0 +1,79 @@
+﻿@model DigitalMenu.Web.Models.ShoppingCart
+
+@{
+    ViewData["Title"] = "سبد خرید";
+}
+
+<div class="container mt-4">
+    <h1>سبد خرید</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            <div class="col-md-8">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">@item.Product.Name</h5>
+                                    <p class="card-text text-muted">@item.Product.Price.ToString("C")</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="badge bg-primary">@item.Quantity عدد</span>
+                                    <span class="fw-bold">@item.TotalPrice.ToString("C")</span>
+                                    <form method="post" action="@Url.Action("RemoveFromCart", "Cart")">
+                                        <input type="hidden" name="productId" value="@item.Product.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">خلاصه سفارش</h5>
+                        <p class="card-text">تعداد آیتم‌ها: @Model.Items.Count</p>
+                        <p class="card-text fw-bold">مجموع: @Model.TotalAmount.ToString("C")</p>
+
+                        <form method="post" action="@Url.Action("Checkout", "Cart")">
+                            <div class="mb-3">
+                                <label for="tableNumber" class="form-label">شماره میز</label>
+                                <input type="number" class="form-control" id="tableNumber" name="tableNumber" min="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-check-circle"></i>
+                                ثبت سفارش
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <h4>سبد خرید شما خالی است</h4>
+            <p>برای افزودن محصول به سبد خرید، از صفحه محصولات اقدام کنید</p>
+            <a href="/Products" class="btn btn-primary">مشاهده محصولات</a>
+        </div>
+    }
+</div>

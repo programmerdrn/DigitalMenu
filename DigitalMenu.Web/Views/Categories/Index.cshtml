@@ -1,0 +1,38 @@
+﻿@model List<DigitalMenu.Application.DTOs.CategoryDTOs.CategoryDto>
+
+@{
+    ViewData["Title"] = "دسته‌بندی‌ها";
+}
+
+<div class="container mt-4">
+    <h1>مدیریت دسته‌بندی‌ها</h1>
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var category in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@category.Name</h5>
+                            <p class="card-text">@category.Description</p>
+                            <p class="text-muted">
+                                تعداد محصولات: @category.Products.Count
+                            </p>
+                            <a href="@Url.Action("Details", new { id = category.Id })" class="btn btn-primary">
+                                مشاهده محصولات
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-warning">هیچ دسته‌بندی‌ای یافت نشد</div>
+            </div>
+        }
+    </div>
+</div>

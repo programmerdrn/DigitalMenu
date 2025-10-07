@@ -1,0 +1,187 @@
+﻿@model List<DigitalMenu.Application.DTOs.ProductDTOs.ProductDto>
+
+@{
+    ViewData["Title"] = "محصولات";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>مدیریت محصولات</h1>
+        <a href="/Cart" class="btn btn-primary position-relative">
+            <i class="bi bi-cart3 me-2"></i>
+            سبد خرید
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @(ViewBag.CartItemCount ?? 0)
+            </span>
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">@product.Name</h5>
+                                <span class="badge @(product.IsAvailable ? "bg-success" : "bg-danger")">
+                                    @(product.IsAvailable ? "موجود" : "ناموجود")
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted flex-grow-1">@product.Description</p>
+
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-success fw-bold fs-5">@product.Price.ToString("C")</span>
+                                    <small class="text-muted">@product.CategoryName</small>
+                                </div>
+
+                                <!-- دکمه افزودن به سبد خرید -->
+                                @if (product.IsAvailable)
+                                {
+                                    <form method="post" action="@Url.Action("AddToCart", "Cart")" class="mt-3">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <div class="input-group">
+                                            <input type="number" name="quantity" value="1" min="1" max="10"
+                                                   class="form-control text-center" style="max-width: 80px;">
+                                            <button type="submit" class="btn btn-success flex-grow-1">
+                                                <i class="bi bi-cart-plus me-2"></i>
+                                                افزودن به سبد
+                                            </button>
+                                        </div>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-secondary w-100" disabled>
+                                        <i class="bi bi-slash-circle me-2"></i>
+                                        ناموجود
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- کارت فوتر برای اطلاعات اضافی -->
+                        <div class="card-footer bg-transparent">
+                            <div class="row text-center text-muted small">
+                                <div class="col-6">
+                                    <i class="bi bi-clock me-1"></i>
+                                    @product.PreparationTime دقیقه
+                                </div>
+                                <div class="col-6">
+                                    <i class="bi bi-star me-1"></i>
+                                    محبوب
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-warning text-center py-4">
+                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                    <h4>هیچ محصولی یافت نشد</h4>
+                    <p class="mb-0">لطفاً بعداً مجدداً بررسی کنید</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // نمایش پیام موفقیت با انیمیشن
+        $(document).ready(function() {
+            // انیمیشن برای کارت‌ها
+            $('.card').hover(
+                function() {
+                    $(this).addClass('shadow-lg');
+                },
+                function() {
+                    $(this).removeClass('shadow-lg');
+                }
+            );
+
+            // اعتبارسنجی تعداد
+            $('input[type="number"]').on('change', function() {
+                if ($(this).val() < 1) {
+                    $(this).val(1);
+                }
+                if ($(this).val() > 10) {
+                    $(this).val(10);
+                }
+            });
+
+            // نمایش تعداد آیتم‌های سبد خرید
+            function updateCartCount() {
+                $.get('/Cart/GetCartCount', function(data) {
+                    $('.cart-count').text(data);
+                });
+            }
+
+            // بروزرسانی تعداد سبد خرید
+            updateCartCount();
+
+            // وقتی فرم ارسال شد، تعداد رو بروز کن
+            $('form').on('submit', function() {
+                setTimeout(updateCartCount, 500);
+            });
+        });
+    </script>
+
+    <style>
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 15px;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .btn-success:hover {
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            }
+
+        .card-title {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .card-footer {
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        input[type="number"] {
+            border: 2px solid #e9ecef;
+            font-weight: bold;
+        }
+
+            input[type="number"]:focus {
+                border-color: #28a745;
+                box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            }
+    </style>
+}
