@@ -20,7 +20,6 @@ namespace DigitalMenu.Infrastructure.Repositories
             return await _dbSet
                 .Where(p => p.CategoryId == categoryId && p.IsAvailable)
                 .Include(p => p.Category)
-                .Where(p => p.Name != null && p.Category != null)
                 .ToListAsync();
         }
 
@@ -29,7 +28,6 @@ namespace DigitalMenu.Infrastructure.Repositories
             return await _dbSet
                 .Where(p => p.IsAvailable)
                 .Include(p => p.Category)
-                .Where(p => p.Name != null && p.Category != null)
                 .ToListAsync();
         }
 
@@ -37,15 +35,14 @@ namespace DigitalMenu.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(p => p.Category)
-                .Where(p => p.Name != null && p.Category != null)
                 .FirstOrDefaultAsync(p => p.Id == productId);
         }
 
+        // این متد رو کاملاً ساده کردم - هیچ شرطی نداره
         public override async Task<IEnumerable<Product>> GetAllAsync()
         {
             return await _dbSet
                 .Include(p => p.Category)
-                .Where(p => p.Name != null && p.Category != null && p.Category.Name != null)
                 .ToListAsync();
         }
     }

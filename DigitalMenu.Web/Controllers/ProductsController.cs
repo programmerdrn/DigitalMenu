@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DigitalMenu.Application.DTOs.ProductDTOs;
 using DigitalMenu.Application.Interfaces;
-using System.Threading.Tasks;
-using System.Text.Json;
 using DigitalMenu.Web.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DigitalMenu.Web.Controllers
 {
@@ -17,12 +18,28 @@ namespace DigitalMenu.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _productService.GetAllProductsAsync();
+            try
+            {
+                // تست مستقیم بدون AutoMapper
+                var products = await _productService.GetAllProductsAsync();
 
-            // نمایش تعداد سبد خرید
-            ViewBag.CartItemCount = GetCartItemCount();
+                // لاگ برای دیباگ
+                Console.WriteLine($"Number of products: {products?.Count}");
+                if (products != null)
+                {
+                    foreach (var product in products)
+                    {
+                        Console.WriteLine($"Product: {product.Name}, Category: {product.CategoryName}");
+                    }
+                }
 
-            return View(products);
+                return View(products);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return View(new List<ProductDto>());
+            }
         }
 
         public async Task<IActionResult> Details(System.Guid id)

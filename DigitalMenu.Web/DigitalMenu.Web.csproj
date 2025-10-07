@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DigitalMenu.Application\DigitalMenu.Application.csproj" />
+    <ProjectReference Include="..\DigitalMenu.Core\DigitalMenu.Core.csproj" />
     <ProjectReference Include="..\DigitalMenu.Infrastructure\DigitalMenu.Infrastructure.csproj" />
   </ItemGroup>
 

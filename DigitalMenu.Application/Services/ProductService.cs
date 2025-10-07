@@ -24,7 +24,20 @@ namespace DigitalMenu.Application.Services
         public async Task<List<ProductDto>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllAsync();
-            return _mapper.Map<List<ProductDto>>(products);
+
+            // تست ساده - بدون AutoMapper
+            var result = products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                CategoryName = p.Category?.Name ?? "بدون دسته",
+                IsAvailable = p.IsAvailable,
+                PreparationTime = p.PreparationTime
+            }).ToList();
+
+            return result;
         }
 
         public async Task<List<ProductDto>> GetProductsByCategoryAsync(Guid categoryId)

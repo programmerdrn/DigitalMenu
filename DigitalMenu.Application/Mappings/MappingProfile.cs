@@ -12,7 +12,7 @@ namespace DigitalMenu.Application.Mappings
         {
             // Product Mappings
             CreateMap<Product, ProductDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : "بدون دسته‌بندی"))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl ?? ""));
 
             CreateMap<CreateProductDto, Product>();

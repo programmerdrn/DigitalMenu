@@ -19,10 +19,20 @@ namespace DigitalMenu.API.Controllers
         }
 
         [HttpGet]
+        [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<ProductDto>>> GetAllProducts()
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            try
+            {
+                var products = await _productService.GetAllProductsAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                // استفاده از پیغام خطای انگلیسی
+                return StatusCode(500, $"Error retrieving products: {ex.Message}");
+            }
         }
 
         [HttpGet("available")]
